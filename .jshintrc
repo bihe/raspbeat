@@ -1,0 +1,21 @@
+{
+  "immed": true,
+  "newcap": true,
+  "noarg": true,
+  "nonew": true,
+  "regexp": true,
+  "undef": true,
+  "trailing": true,
+  "unused": true,
+
+  "asi": true,
+  "boss": true,
+  "evil": true,
+  "expr": true,
+  "laxbreak": true,
+  "laxcomma": true,
+  "loopfunc": true,
+  "proto": true,
+
+  "node": true
+}
