@@ -6,7 +6,7 @@
 
 var express = require('express');
 var router = express.Router();
-var appCtrl = require('../controllers/ui');
+var appCtrl = require('../controllers/uicontroller');
 
 // setup the routes and delegate logic to the controllers
 // --------------------------------------------------------------------------

@@ -6,11 +6,10 @@
 
 var express = require('express');
 var router = express.Router();
-
+var apiCtrl = require('../controllers/apicontroller');
 
 // setup the routes and delegate logic to the controllers
 // --------------------------------------------------------------------------
-
-//router.get('/' + API + '/version', baseController.version);
+router.post('/beat', apiCtrl.beat);
 
 module.exports = router;

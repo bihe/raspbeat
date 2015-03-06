@@ -12,7 +12,6 @@ var logger = require('morgan');
 var session = require('cookie-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var csrf = require('csurf');
 var mongoose = require('mongoose');
 
 var routes = require('./app/routes');
@@ -42,7 +41,6 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(session({name: 'raspbeat', secret: config.application.secret}));
 app.use(cookieParser(config.application.secret));
-app.use(csrf());
 
 if(env === 'development') {
   app.use('/app/', express.static(path.join(__dirname, 'public/app'), {maxAge: '5d'}));
@@ -92,20 +90,6 @@ process.on('SIGINT', function() {
     console.log('Mongoose default connection disconnected through app termination');
     process.exit(0);
   });
-});
-
-// --------------------------------------------------------------------------
-// CSRF handling with angular
-// --------------------------------------------------------------------------
-
-app.use(function(req, res, next) {
-
-  if(!req.session.currentToken) {
-    var csrfToken = req.csrfToken();
-    res.cookie('XSRF-TOKEN', csrfToken);
-    req.session.currentToken = csrfToken;
-  }
-  next();
 });
 
 // --------------------------------------------------------------------------

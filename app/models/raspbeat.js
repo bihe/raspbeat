@@ -29,6 +29,9 @@ var raspSchema = new Schema({
   localTimestamp: {
     type: Date,
     default: Date.now
+  },
+  load: {
+    type: String
   }
 });
 
@@ -42,7 +45,7 @@ raspSchema.pre('save', function (next) {
 });
 
 raspSchema.methods.toString = function() {
-	return '[title: ' + this.title + ', IP: ' + this.ip + ' (id: ' + this._id +')]';
+	return '[title: ' + this.title + ', IP: ' + this.ip + ' (id: ' + this._id +', alternativeId: ' + this.alternativeId + ')]';
 };
 
 module.exports = mongoose.model('Raspbeat', raspSchema);
