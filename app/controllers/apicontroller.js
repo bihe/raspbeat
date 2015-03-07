@@ -29,7 +29,6 @@ exports.beat = function(req, res) {
 
   try {
 
-    // TODO: check for given token - if the 'bearer' is not available return error
     payload = req.body;
     console.log('got payload');
     log.dump(payload);
@@ -62,3 +61,5 @@ exports.beat = function(req, res) {
     return res.status(500).send('Cannot receive beat! ' + err);
   }
 };
+
+

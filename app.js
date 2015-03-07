@@ -18,9 +18,11 @@ var routes = require('./app/routes');
 var apiRoutes = require('./app/routes/api');
 var config = require('./app/config/application');
 var database = require('./app/config/database');
+var TokenService = require('./app/services/tokenService');
 
 var app = express();
 var env = app.get('env') || 'development';
+var tokenSvc = new TokenService();
 
 // --------------------------------------------------------------------------
 // Application setup
@@ -96,7 +98,7 @@ process.on('SIGINT', function() {
 // Route handling
 // --------------------------------------------------------------------------
 
-app.use('/api', apiRoutes);
+app.use('/api', tokenSvc.verifyToken, apiRoutes);
 app.use('/', routes);
 
 // --------------------------------------------------------------------------

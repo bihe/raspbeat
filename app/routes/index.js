@@ -11,5 +11,6 @@ var appCtrl = require('../controllers/uicontroller');
 // setup the routes and delegate logic to the controllers
 // --------------------------------------------------------------------------
 router.get('/', appCtrl.index);
+router.get('/beats', appCtrl.getBeats);
 
 module.exports = router;
