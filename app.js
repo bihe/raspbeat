@@ -13,16 +13,40 @@ var session = require('cookie-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var csrf = require('csurf');
+var flash = require('connect-flash');
+var passport = require('passport');
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
+var google = require('./app/config/google');
 var routes = require('./app/routes');
 var apiRoutes = require('./app/routes/api');
+var authRoutes = require('./app/routes/auth');
 var config = require('./app/config/application');
 var database = require('./app/config/database');
 var TokenService = require('./app/services/tokenService');
+var SecurityService = require('./app/services/securityService');
 
 var app = express();
 var env = app.get('env') || 'development';
 var tokenSvc = new TokenService();
+
+
+// --------------------------------------------------------------------------
+// Passport setup
+// --------------------------------------------------------------------------
+var secService = new SecurityService();
+
+passport.serializeUser(secService.serializeUser);
+passport.deserializeUser(secService.deserializeUser);
+passport.use(new GoogleStrategy({
+    clientID: google.CLIENT_ID,
+    clientSecret: google.CLIENT_SECRET,
+    callbackURL: google.RETURN_URL
+  },
+  secService.findOAuthUser
+));
+
 
 // --------------------------------------------------------------------------
 // Application setup
@@ -42,7 +66,12 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(session({name: 'raspbeat', secret: config.application.secret}));
+app.use(flash());
 app.use(cookieParser(config.application.secret));
+app.use(passport.initialize());
+app.use(passport.session());
+//app.use(csrf());
+
 
 if(env === 'development') {
   app.use('/app/', express.static(path.join(__dirname, 'public/app'), {maxAge: '5d'}));
@@ -95,11 +124,35 @@ process.on('SIGINT', function() {
 });
 
 // --------------------------------------------------------------------------
+// CSRF handling with angular
+// --------------------------------------------------------------------------
+
+app.use(function(req, res, next) {
+
+  if(!req.session.currentToken) {
+    try {
+      if (typeof req.csrfToken === 'function') {
+        var csrfToken = req.csrfToken();
+        res.cookie('XSRF-TOKEN', csrfToken);
+        req.session.currentToken = csrfToken;
+      }
+    } catch(err) {
+      console.log('CSRF error ' + err);
+    }
+  }
+  next();
+});
+
+var csrfProtection = csrf({ cookie: true })
+
+
+// --------------------------------------------------------------------------
 // Route handling
 // --------------------------------------------------------------------------
 
+app.use('/auth', authRoutes);
 app.use('/api', tokenSvc.verifyToken, apiRoutes);
-app.use('/', routes);
+app.use('/', secService.authRequired, csrfProtection, routes);
 
 // --------------------------------------------------------------------------
 // Error handling

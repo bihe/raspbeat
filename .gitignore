@@ -2,6 +2,7 @@
 
 app/config/database.js
 app/config/application.js
+app/config/google.js
 
 .DS_Store
 node_modules/

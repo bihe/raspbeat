@@ -5,6 +5,7 @@
 
 var RaspBeat = require('../models/raspbeat');
 var utils = require('../util/utils');
+var logger = require('../util/logger');
 
 /**
  * simple controller, just redirect to the html UI frontend
@@ -16,6 +17,75 @@ exports.index = function(req, res) {
   res.redirect('/app');
 };
 
+/**
+ * show the login form
+ * @param req
+ * @param res
+ */
+exports.login = function(req, res) {
+  res.locals.errors = req.flash();
+  console.log(res.locals.errors);
+  res.render('login', { messages: res.locals.errors });
+};
+
+/**
+ * perform a logout
+ * @param req
+ * @param res
+ */
+exports.logout = function(req, res) {
+  var result = {};
+  result.success = true;
+  try {
+    req.logout();
+    res.render('login', { messages: { info: 'User logged out!' }});
+    return;
+  } catch(error) {
+    result.success = false;
+    result.error = error;
+  }
+  res.json(result);
+};
+
+/**
+ * get user profile
+ * @param req
+ * @param res
+ */
+exports.user = function(req, res) {
+  var userService = new UserService();
+  userService.findUserById(req.user).then(function(user) {
+    var viewModel = {};
+    viewModel.hasToken = false;
+    if(user.token && user.token !== '' && user.tokenDate) {
+      viewModel.hasToken = true;
+    }
+    viewModel.thumb = user.thumb;
+    viewModel.displayName = user.displayName;
+    viewModel.email = user.email;
+
+    res.json(viewModel);
+  }).catch(function(error) {
+
+    console.log(error.stack);
+    return res.status(400).send('Cannot find user! ' + error);
+  }).done();
+};
+
+/**
+ * basic error handling
+ * @param req
+ * @param res
+ * @param next
+ * @param err
+ * @returns {*}
+ */
+exports.handleError = function( req, res, next, err ) {
+  console.error('An error occured: ' + err.message);
+  console.error('Stack: ' + err.stack);
+
+  return next(err);
+};
 
 /**
  * get a list of beats between two timestamps for a specific raspberry
@@ -34,7 +104,13 @@ exports.getBeats = function(req, res) {
       filter = {};
       filter.title = req.query.title;
       logicalAnd.push(filter);
+    } else {
+      console.log('need a title to query data!');
+      res.status(400).send('Need a title to query data!');
+      return;
     }
+
+
     if(req.query.df) {
       filterValue = req.query.df;
       filter = {};
@@ -60,8 +136,7 @@ exports.getBeats = function(req, res) {
       res.json([]);
       return;
     }
-
-    console.log(filter);
+    logger.dump(filter);
 
     RaspBeat.find(filter).sort({created: -1, title: 1})
       .exec(function(err,beats) {
@@ -76,6 +151,43 @@ exports.getBeats = function(req, res) {
     console.log('Got error: ' + err);
     console.log(err.stack);
 
-    return res.status(500).send('Cannot receive beat! ' + err);
+    return res.status(500).send('Cannot get beats! ' + err);
+  }
+};
+
+/**
+ * get a list of available beat entries - categoriesed by title
+ * @param req
+ * @param res
+ */
+exports.getBeatsOverview = function(req, res) {
+
+  console.log('get beats categorised');
+
+  try {
+
+    // define the grouping
+    var filter = {
+      $group : {
+        _id : { title: "$title", ip: "$ip"},
+        count: { $sum: 1 },
+        lastEntry: {$last: "$created"}
+      }
+    };
+
+    RaspBeat.aggregate(filter,
+      function (err, groupedBeats) {
+        if (err) {
+          return res.status(500).send('Cannot return beats! ' + err);
+        }
+        return res.json(groupedBeats);
+      }
+    );
+
+  } catch (err) {
+    console.log('Got error: ' + err);
+    console.log(err.stack);
+
+    return res.status(500).send('Cannot get beat categories! ' + err);
   }
 };
