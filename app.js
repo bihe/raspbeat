@@ -74,10 +74,10 @@ app.use(passport.session());
 
 
 if(env === 'development') {
-  app.use('/app/', express.static(path.join(__dirname, 'public/app'), {maxAge: '5d'}));
+  app.use('/app/', secService.authRequired, express.static(path.join(__dirname, 'public/app'), {maxAge: '5d'}));
   app.use(favicon(__dirname + '/public/app/html5.ico'));
 } else if(env === 'production') {
-  app.use('/app', express.static(path.join(__dirname, 'public/app/dist'), {maxAge: '5d'}));
+  app.use('/app/', secService.authRequired, express.static(path.join(__dirname, 'public/app/dist'), {maxAge: '5d'}));
   app.use(favicon(__dirname + '/public/app/dist/html5.ico'));
 }
 app.disable('x-powered-by');
