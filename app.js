@@ -57,7 +57,7 @@ app.set('port', process.env.PORT || 3000);
 app.set('host', process.env.HOST || '127.0.0.1');
 
 // view engine setup
-app.set('views', path.join(__dirname, 'app/views'));
+app.set('views', path.join(__dirname, 'ui/views'));
 app.set('view engine', 'jade');
 
 app.use(logger('dev'));
@@ -70,15 +70,15 @@ app.use(flash());
 app.use(cookieParser(config.application.secret));
 app.use(passport.initialize());
 app.use(passport.session());
-//app.use(csrf());
+//ui.use(csrf());
 
 
 if(env === 'development') {
-  app.use('/app/', secService.authRequired, express.static(path.join(__dirname, 'public/app'), {maxAge: '5d'}));
-  app.use(favicon(__dirname + '/public/app/html5.ico'));
+  app.use('/ui/', secService.authRequired, express.static(path.join(__dirname, 'public/ui'), {maxAge: '5d'}));
+  app.use(favicon(__dirname + '/public/ui/html5.ico'));
 } else if(env === 'production') {
-  app.use('/app/', secService.authRequired, express.static(path.join(__dirname, 'public/app/dist'), {maxAge: '5d'}));
-  app.use(favicon(__dirname + '/public/app/dist/html5.ico'));
+  app.use('/ui/', secService.authRequired, express.static(path.join(__dirname, 'public/ui/dist'), {maxAge: '5d'}));
+  app.use(favicon(__dirname + '/public/ui/dist/html5.ico'));
 }
 app.disable('x-powered-by');
 app.enable('trust proxy');
@@ -118,7 +118,7 @@ mongoose.connection.on('disconnected', function () {
 // If the Node process ends, close the Mongoose connection
 process.on('SIGINT', function() {
   mongoose.connection.close(function () {
-    console.log('Mongoose default connection disconnected through app termination');
+    console.log('Mongoose default connection disconnected through ui termination');
     process.exit(0);
   });
 });
@@ -209,6 +209,6 @@ app.use(function(req, res, next){
 // --------------------------------------------------------------------------
 
 http.createServer(app).listen(app.get('port'), app.get('host'),  function(){
-  console.log('node.js is run in mode [' + env + ']');
+  console.log('node.ui is run in mode [' + env + ']');
   console.log('Express listening on ' + app.get('host') + ':' + app.get('port'));
 });

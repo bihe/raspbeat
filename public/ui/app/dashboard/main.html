@@ -1,0 +1,13 @@
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" ng-controller="dashBoardController as ctrl">
+    <h1 class="page-header">Raspbeat Dashboard</h1>
+
+    <div class="row cardsection">
+        <div class="col-xs-6 col-sm-3 cardsection" ng-repeat="value in ctrl.data">
+
+            <h4>{{ value._id.title }}</h4>
+            <span>{{ value.lastEntry }}</span>
+            <span class="text-muted">{{ value._id.ip }} / count: {{ value.count }}</span>
+        </div>
+
+    </div>
+</div>

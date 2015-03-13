@@ -31,7 +31,7 @@ router.get('/google', passport.authenticate('google', { scope: google.SCOPE }));
 router.get('/google/return',
   passport.authenticate('google', { failureRedirect: '/auth/login', failureFlash: true }),
   function(req, res) {
-    res.redirect('/app');
+    res.redirect('/ui');
   });
 
 module.exports = router;

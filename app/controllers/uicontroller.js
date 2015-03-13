@@ -14,7 +14,7 @@ var logger = require('../util/logger');
  */
 exports.index = function(req, res) {
   console.log('redirect to UI logic now!');
-  res.redirect('/app');
+  res.redirect('/ui');
 };
 
 /**
