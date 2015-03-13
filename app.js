@@ -57,7 +57,7 @@ app.set('port', process.env.PORT || 3000);
 app.set('host', process.env.HOST || '127.0.0.1');
 
 // view engine setup
-app.set('views', path.join(__dirname, 'ui/views'));
+app.set('views', path.join(__dirname, 'app/views'));
 app.set('view engine', 'jade');
 
 app.use(logger('dev'));
