@@ -21,7 +21,7 @@
      * @returns {HttpPromise}
      */
     function getOverview() {
-      return $http.get('/overviewBeats');
+      return $http.get('/api/ui/overviewBeats');
     }
   }
 })();

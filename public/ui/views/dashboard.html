@@ -1,0 +1,22 @@
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" ng-controller="dashBoardController as ctrl" >
+
+    <div class="row cardsection">
+
+        <div class="col-sm-6 col-md-3" ng-repeat="value in ctrl.data">
+            <div class="thumbnail">
+                <!--<img class="img-rounded" src="img/thumbnail-1.jpg">-->
+                <div class="caption text-center">
+                    <h3>{{ value.title }}</h3>
+                    <p>Uses the IP-Address: {{ value.ip }}, and sent {{ value.count }} values.
+                        <br/>The last value was sent <i>{{ value.last }}</i></p>
+                    <p>
+                        <a href="#" class="btn btn-warning" role="button">Details</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>

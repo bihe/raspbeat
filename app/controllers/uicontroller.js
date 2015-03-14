@@ -6,6 +6,7 @@
 var RaspBeat = require('../models/raspbeat');
 var utils = require('../util/utils');
 var logger = require('../util/logger');
+var UserService = require('../services/userService');
 
 /**
  * simple controller, just redirect to the html UI frontend
@@ -56,10 +57,6 @@ exports.user = function(req, res) {
   var userService = new UserService();
   userService.findUserById(req.user).then(function(user) {
     var viewModel = {};
-    viewModel.hasToken = false;
-    if(user.token && user.token !== '' && user.tokenDate) {
-      viewModel.hasToken = true;
-    }
     viewModel.thumb = user.thumb;
     viewModel.displayName = user.displayName;
     viewModel.email = user.email;

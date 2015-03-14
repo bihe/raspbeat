@@ -20,6 +20,7 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var google = require('./app/config/google');
 var routes = require('./app/routes');
+var uiRoutes = require('./app/routes/ui');
 var apiRoutes = require('./app/routes/api');
 var authRoutes = require('./app/routes/auth');
 var config = require('./app/config/application');
@@ -151,7 +152,8 @@ var csrfProtection = csrf({ cookie: true })
 // --------------------------------------------------------------------------
 
 app.use('/auth', authRoutes);
-app.use('/api', tokenSvc.verifyToken, apiRoutes);
+app.use('/api/receiver', tokenSvc.verifyToken, apiRoutes);
+app.use('/api/ui', secService.authRequired, csrfProtection, uiRoutes);
 app.use('/', secService.authRequired, csrfProtection, routes);
 
 // --------------------------------------------------------------------------
@@ -209,6 +211,6 @@ app.use(function(req, res, next){
 // --------------------------------------------------------------------------
 
 http.createServer(app).listen(app.get('port'), app.get('host'),  function(){
-  console.log('node.ui is run in mode [' + env + ']');
+  console.log('node.app is run in mode [' + env + ']');
   console.log('Express listening on ' + app.get('host') + ':' + app.get('port'));
 });

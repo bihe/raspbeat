@@ -1,6 +1,6 @@
 /*
- * base routes
- * index.js created by Henrik Binggl
+ * base ui routes
+ * ui.js created by Henrik Binggl
  */
 'use strict';
 
@@ -10,6 +10,8 @@ var appCtrl = require('../controllers/uicontroller');
 
 // setup the routes and delegate logic to the controllers
 // --------------------------------------------------------------------------
-router.get('/', appCtrl.index);
+router.get('/overviewBeats', appCtrl.getBeatsOverview);
+router.get('/beats', appCtrl.getBeats);
+router.get('/user', appCtrl.user);
 
 module.exports = router;

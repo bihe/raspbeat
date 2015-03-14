@@ -11,5 +11,7 @@ public/dist/
 
 public/node_modules/
 public/ui/bower_components/
+public/ui/dist
+public/.tmp
 
 .idea

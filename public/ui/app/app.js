@@ -4,11 +4,13 @@
   angular
     .module('raspApp', [
       'ui.router',
-      'app.dashboard'
+      'app.dashboard',
+      'app.user'
     ])
     .constant('_', window._)
-    .config(['$stateProvider', '$urlRouterProvider',
-      function ($stateProvider, $urlRouterProvider) {
+    .constant('moment', window.moment)
+    .config(['$stateProvider', '$urlRouterProvider','$compileProvider',
+      function ($stateProvider, $urlRouterProvider, $compileProvider) {
         //
         // for any unmatched url, redirect to /state1
         $urlRouterProvider.otherwise("/");
@@ -18,8 +20,13 @@
         $stateProvider
         .state('initial', {
           url: "/",
-          templateUrl: "app/dashboard/main.html"
+          templateUrl: "views/dashboard.html"
         })
+
+
+        //
+        // speedup
+        $compileProvider.debugInfoEnabled(false);
 
       }])
     .run(['$rootScope', '$location',

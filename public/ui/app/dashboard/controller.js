@@ -3,25 +3,32 @@
 
   angular
     .module('app.dashboard')
-    .controller('dashBoardController', ['dashBoardService', dashBoardController]);
+    .controller('dashBoardController', ['dashBoardService', '_', 'moment', dashBoardController]);
 
   /**
    * the main logic of the dashboard
    * @constructor
    */
-  function dashBoardController(dashBoardService) {
+  function dashBoardController(dashBoardService, _, moment) {
     /* jshint validthis: true */
     var vm = this;
 
     load();
 
 
+    ////////////
+
     /**
      * load the overview data
      */
     function load() {
       dashBoardService.getDashboardData().success(function(data) {
-        vm.data = data;
+        var formatData = [];
+        _.forEach(data, function(elem) {
+          formatData.push({title: elem._id.title, ip: elem._id.ip, count: elem.count, last: moment(elem.lastEntry).fromNow()});
+        });
+        vm.data = formatData;
+
       }).error( function(data, status, headers) {
         alert('Error: ' + data + '\nHTTP-Status: ' + status);
       });
