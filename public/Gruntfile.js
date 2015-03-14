@@ -4,6 +4,8 @@ module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
   require('time-grunt')(grunt);
 
+  grunt.loadNpmTasks('grunt-contrib-compress');
+
   grunt.initConfig({
     base: {
       // configurable paths
@@ -200,6 +202,18 @@ module.exports = function (grunt) {
           ]
         }
       }
+    },
+    // gzip assets 1-to-1 for production
+    compress: {
+      main: {
+        options: {
+          archive: 'ui-dist.zip'
+        },
+        expand: true,
+        cwd: 'ui/dist/',
+        src: ['**/*'],
+        dest: './'
+      }
     }
   });
 
@@ -214,7 +228,8 @@ module.exports = function (grunt) {
     'cssmin',
     'uglify',
     'rev',
-    'usemin'
+    'usemin',
+    'compress'
   ]);
 
   grunt.registerTask('default', [

@@ -7,10 +7,11 @@
                 <!--<img class="img-rounded" src="img/thumbnail-1.jpg">-->
                 <div class="caption text-center">
                     <h3>{{ value.title }}</h3>
-                    <p>Uses the IP-Address: {{ value.ip }}, and sent {{ value.count }} values.
-                        <br/>The last value was sent <i>{{ value.last }}</i></p>
+                    <p>IP-Address: <i style="color:green">{{ value.ip }}</i>
+                        <br/>Sent <i style="color:blue">{{ value.count }}</i> values.
+                        <br/>Sent the last value <i style="color:red">{{ value.last }}</i></p>
                     <p>
-                        <a href="#" class="btn btn-warning" role="button">Details</a>
+                        <a href="#" class="btn btn-warning" role="button" disabled="disabled" >Details</a>
                     </p>
                 </div>
             </div>
