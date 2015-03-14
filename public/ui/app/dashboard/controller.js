@@ -23,9 +23,15 @@
      */
     function load() {
       dashBoardService.getDashboardData().success(function(data) {
-        var formatData = [];
+        var formatData = [], timeIsOver = false;
         _.forEach(data, function(elem) {
-          formatData.push({title: elem._id.title, ip: elem._id.ip, count: elem.count, last: moment(elem.lastEntry).fromNow()});
+          try {
+            // parse the entry - if there was no entry for more than 12h - the host is down
+            timeIsOver = moment(elem.lastEntry).add(13, 'h').isBefore();
+            formatData.push({title: elem._id.title, ip: elem._id.ip, count: elem.count, last: moment(elem.lastEntry).fromNow(), down: timeIsOver});
+          } catch (err) {
+            console.log(err);
+          }
         });
         vm.data = formatData;
 

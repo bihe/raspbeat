@@ -4,9 +4,17 @@
 
         <div class="col-sm-6 col-md-3" ng-repeat="value in ctrl.data">
             <div class="thumbnail">
+
+                <div class="alert-indicator" ng-if="value.down == true">
+                    <span class="label label-danger alert-indicator-value">
+                     <strong >HOST DOWN</strong>
+                    </span>
+                </div>
+
                 <!--<img class="img-rounded" src="img/thumbnail-1.jpg">-->
                 <div class="caption text-center">
-                    <h3>{{ value.title }}</h3>
+                    <h3 ng-if="value.down == true"><span class="label label-danger"> {{ value.title }} </span> </h3>
+                    <h3 ng-if="value.down == false">{{ value.title }}</h3>
                     <p>IP-Address: <i style="color:green">{{ value.ip }}</i>
                         <br/>Sent <i style="color:blue">{{ value.count }}</i> values.
                         <br/>Sent the last value <i style="color:red">{{ value.last }}</i></p>

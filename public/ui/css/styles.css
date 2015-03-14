@@ -133,3 +133,14 @@ body {
 .navbar-inverse .navbar-text, .navbar-inverse .navbar-nav > li > a {
     color: white;
 }
+
+.alert-indicator {
+    position: absolute;
+    top: -2px;
+    right: 10px;
+    z-index: 1;
+}
+
+.alert-indicator-value {
+    font-size: smaller;
+}
