@@ -75,11 +75,11 @@ app.use(passport.session());
 
 
 if(env === 'development') {
-  app.use('/ui/', secService.authRequired, express.static(path.join(__dirname, 'public/ui'), {maxAge: '5d'}));
-  app.use(favicon(__dirname + '/public/ui/html5.ico'));
+  app.use('/ui/', secService.authRequired, express.static(path.join(__dirname, 'ui'), {maxAge: '5d'}));
+  app.use(favicon(__dirname + '/ui/html5.ico'));
 } else if(env === 'production') {
-  app.use('/ui/', secService.authRequired, express.static(path.join(__dirname, 'public/ui/dist'), {maxAge: '5d'}));
-  app.use(favicon(__dirname + '/public/ui/dist/html5.ico'));
+  app.use('/ui/', secService.authRequired, express.static(path.join(__dirname, 'ui/dist'), {maxAge: '5d'}));
+  app.use(favicon(__dirname + '/ui/dist/html5.ico'));
 }
 app.disable('x-powered-by');
 app.enable('trust proxy');

@@ -4,15 +4,12 @@ app/config/database.js
 app/config/application.js
 app/config/google.js
 
-.DS_Store
 node_modules/
 
-public/dist/
+ui/bower_components/
+ui/dist/
 
-public/node_modules/
-public/ui/bower_components/
-public/ui/dist
-public/.tmp
-public/ui-dist.zip
+ui-dist.zip
 
+.tmp
 .idea
