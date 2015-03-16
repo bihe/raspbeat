@@ -10,7 +10,6 @@
    * @constructor
    */
   function dashBoardController(dashBoardService, _, moment) {
-    /* jshint validthis: true */
     var vm = this;
 
     load();
