@@ -22,12 +22,10 @@
      */
     function load() {
       dashBoardService.getDashboardData().success(function(data) {
-        var formatData = [], timeIsOver = false;
+        var formatData = [];
         _.forEach(data, function(elem) {
           try {
-            // parse the entry - if there was no entry for more than 12h - the host is down
-            timeIsOver = moment(elem.lastEntry).add(13, 'h').isBefore();
-            formatData.push({title: elem._id.title, ip: elem._id.ip, count: elem.count, last: moment(elem.lastEntry).fromNow(), down: timeIsOver});
+            formatData.push({title: elem._id.title, ip: elem._id.ip, count: elem.count, last: moment(elem.lastEntry).fromNow(), down: elem.timeIsOver});
           } catch (err) {
             console.log(err);
           }

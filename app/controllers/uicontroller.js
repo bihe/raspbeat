@@ -3,10 +3,13 @@
  */
 'use strict';
 
+var moment = require('moment');
+var _ = require('lodash');
 var RaspBeat = require('../models/raspbeat');
 var utils = require('../util/utils');
 var logger = require('../util/logger');
 var UserService = require('../services/userService');
+var config = require('../config/application');
 
 /**
  * simple controller, just redirect to the html UI frontend
@@ -177,6 +180,13 @@ exports.getBeatsOverview = function(req, res) {
         if (err) {
           return res.status(500).send('Cannot return beats! ' + err);
         }
+
+        // iterate over the grouped beats and find out if the beat
+        // is older than a given timespan
+        _.forEach(groupedBeats, function(elem) {
+          elem.timeIsOver = moment(elem.lastEntry).add(config.application.timespandown, 'h').isBefore();
+        });
+
         return res.json(groupedBeats);
       }
     );
