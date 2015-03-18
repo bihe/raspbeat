@@ -174,8 +174,13 @@ exports.getBeatsOverview = function(req, res) {
         lastEntry: {$last: "$created"}
       }
     };
+    var order = {
+      $sort : {
+        _id : 1
+      }
+    }
 
-    RaspBeat.aggregate(filter,
+    RaspBeat.aggregate(filter, order,
       function (err, groupedBeats) {
         if (err) {
           return res.status(500).send('Cannot return beats! ' + err);
