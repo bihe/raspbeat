@@ -138,7 +138,7 @@ module.exports = function (grunt) {
           },
           {
             expand: true,
-            cwd: 'bower_components/Bootflat/bootflat/css',
+            cwd: 'ui/bower_components/Bootflat/bootflat/css',
             dest: '.tmp/bower_components/Bootflat/bootflat/css',
             src: 'bootflat.css'
           }
