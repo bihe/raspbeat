@@ -203,3 +203,51 @@ exports.getBeatsOverview = function(req, res) {
     return res.status(500).send('Cannot get beat categories! ' + err);
   }
 };
+
+/**
+ * get the sum of beats and senders
+ * @param req
+ * @param res
+ */
+exports.getSumBeats = function(req, res) {
+  try {
+
+    // define the grouping
+    var filter = {
+      $group : {
+        _id : { title: "$title", ip: "$ip"},
+        count: { $sum: 1 },
+        lastEntry: {$last: "$created"}
+      }
+    };
+    var result = {};
+    var senders = 0;
+    var entries = 0;
+
+    RaspBeat.aggregate(filter,
+      function (err, groupedBeats) {
+        if (err) {
+          return res.status(500).send('Cannot return beats! ' + err);
+        }
+
+        // got the beats - num sum the number of entries and the number
+        // of senders
+        _.forEach(groupedBeats, function(elem) {
+          senders += 1;
+          entries += elem.count;
+        });
+
+        result.senders = senders;
+        result.entries = entries;
+
+        return res.json(result);
+      }
+    );
+
+  } catch (err) {
+    console.log('Got error: ' + err);
+    console.log(err.stack);
+
+    return res.status(500).send('Cannot get beat sums! ' + err);
+  }
+};

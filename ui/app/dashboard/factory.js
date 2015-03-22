@@ -10,7 +10,8 @@
   function dashBoardService($http) {
 
     var service = {
-      getDashboardData: getOverview
+      getDashboardData: getOverview,
+      getStats: getStats
     };
     return service;
 
@@ -22,6 +23,14 @@
      */
     function getOverview() {
       return $http.get('/api/ui/overviewBeats');
+    }
+
+    /**
+     * retrieve the stats
+     * @returns {HttpPromise}
+     */
+    function getStats() {
+      return $http.get('/api/ui/sumBeats');
     }
   }
 })();

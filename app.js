@@ -112,7 +112,7 @@ mongoose.connection.on('disconnected', function () {
   // try each 15seconds to reestablish a connection
   setTimeout(function() {
     console.log('Re-Open a Mongoose connection!');
-    mongoose.connect(uristring);
+    mongoose.connect(uristring, database.options);
   }, 15000);
 });
 

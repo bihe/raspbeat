@@ -18,7 +18,7 @@
 
 </head>
 
-<body>
+<body ng-controller="statsController as ctrl">
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
@@ -31,11 +31,18 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">RaspBeat</a>
+            <a class="navbar-brand" href="/" >RaspBeat <span class="stats badge badge-success" title="Number of senders">{{ ctrl.stats.senders }}</span> <span class="stats badge badge-warning" title="Total entries">{{ ctrl.stats.entries }}</span>
+            </a>
+
         </div>
-        <div id="navbar" class="navbar-collapse collapse" ng-controller="userController as ctrl">
+        <div id="navbar" class="navbar-collapse collapse" ng-controller="userController as u">
+            <ul class="nav navbar-nav ">
+
+
+            </ul>
+
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="/auth/logout" ng-cloak class="ng-cloak">{{ctrl.user.displayName}}</a></li>
+                <li><a href="/auth/logout" ng-cloak class="ng-cloak">{{u.user.displayName}}</a></li>
             </ul>
         </div>
     </div>
@@ -44,16 +51,12 @@
 <div class="container-fluid">
     <div class="row">
 
-
-
-
-
         <!-- navigation sidebar -->
         <div class="col-sm-3 col-md-2 sidebar">
 
-            <ul class="list-group">
-                <li class="list-group-item"><span class="badge">2</span>Senders</li>
-                <li class="list-group-item"><span class="badge badge-default">14</span>Total Entries</li>
+            <ul class="list-group" >
+                <li class="list-group-item"><span class="badge badge-success">{{ ctrl.stats.senders }}</span>Senders</li>
+                <li class="list-group-item"><span class="badge badge-warning">{{ ctrl.stats.entries }}</span>Total Entries</li>
 
             </ul>
 
@@ -79,6 +82,7 @@
 
 <script src="app/dashboard/module.js"></script>
 <script src="app/dashboard/controller.js"></script>
+<script src="app/dashboard/statsController.js"></script>
 <script src="app/dashboard/factory.js"></script>
 
 <script src="app/users/module.js"></script>

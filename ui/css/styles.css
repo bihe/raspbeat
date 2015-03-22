@@ -28,6 +28,17 @@ body {
     border: 0;
 }
 
+.stats {
+    display: inline-block;
+}
+
+@media (min-width: 768px) {
+    .stats {
+        display: none;
+    }
+}
+
+
 /*
  * Sidebar
  */
