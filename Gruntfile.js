@@ -160,7 +160,7 @@ module.exports = function (grunt) {
             expand: true,
             cwd: 'ui/images',
             dest: '<%= base.dist %>/images',
-            src: '{,*/}*.jpg'
+            src: '{,*/}*.*'
           },
         ]
       },
