@@ -21,7 +21,8 @@ var log = require('../util/logger');
  * @param req
  * @param res
  */
-exports.beat = function(req, res) {
+
+exports.beat = function (req, res) {
   var payload = '',
     beat;
 
@@ -38,14 +39,14 @@ exports.beat = function(req, res) {
       localTimestamp: payload.localTimestamp,
       load: payload.load
     });
-    
-    beat.save(function(err, b) {
-      if(err) {
+
+    beat.save(function (err, b) {
+      if (err) {
         console.log('could not save the beat: ' + err);
         return res.status(500).send('Cannot save beat! ' + err);
       }
 
-      if(!b) {
+      if (!b) {
         console.log('could not save the beat - beat is null!');
         return res.status(500).send('Cannot save beat - beat is null!');
       }
@@ -61,5 +62,3 @@ exports.beat = function(req, res) {
     return res.status(500).send('Cannot receive beat! ' + err);
   }
 };
-
-

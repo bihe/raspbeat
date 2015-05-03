@@ -169,16 +169,16 @@ exports.getBeatsOverview = function(req, res) {
     // define the grouping
     var filter = {
       $group : {
-        _id : { title: "$title", ip: "$ip"},
+        _id : { title: '$title', ip: '$ip'},
         count: { $sum: 1 },
-        lastEntry: {$last: "$created"}
+        lastEntry: {$last: '$created'}
       }
     };
     var order = {
       $sort : {
         _id : 1
       }
-    }
+    };
 
     RaspBeat.aggregate(filter, order,
       function (err, groupedBeats) {
@@ -215,9 +215,9 @@ exports.getSumBeats = function(req, res) {
     // define the grouping
     var filter = {
       $group : {
-        _id : { title: "$title", ip: "$ip"},
+        _id : { title: '$title', ip: '$ip'},
         count: { $sum: 1 },
-        lastEntry: {$last: "$created"}
+        lastEntry: {$last: '$created'}
       }
     };
     var result = {};
