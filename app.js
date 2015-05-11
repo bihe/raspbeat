@@ -30,7 +30,7 @@ var SecurityService = require('./app/services/securityService');
 
 var app = express();
 var env = app.get('env') || 'development';
-var tokenSvc = new TokenService();
+var tokenSvc = new TokenService(config.application.tokens);
 
 
 // --------------------------------------------------------------------------
@@ -152,7 +152,7 @@ var csrfProtection = csrf({ cookie: true })
 // --------------------------------------------------------------------------
 
 app.use('/auth', authRoutes);
-app.use('/api/receiver', tokenSvc.verifyToken, apiRoutes);
+app.use('/api/receiver', tokenSvc.verifyToken.bind(tokenSvc), apiRoutes);
 app.use('/api/ui', secService.authRequired, csrfProtection, uiRoutes);
 app.use('/', secService.authRequired, csrfProtection, routes);
 

@@ -3,7 +3,6 @@
  */
 'use strict';
 
-var config = require('../config/application');
 var _ = require('lodash');
 
 /**
@@ -44,11 +43,6 @@ TokenService.prototype = (function() {
         token = bearer.replace('Bearer ', '');
         if(!token) {
           return res.status(403).send('Missing authorization token!');
-        }
-        // fallback if not supplied
-        if(typeof self === 'undefined') {
-          self = {};
-          self.tokens = config.application.tokens;
         }
 
         // lookup the token
