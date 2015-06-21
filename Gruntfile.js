@@ -150,8 +150,8 @@ module.exports = function (grunt) {
           },
           {
             expand: true,
-            cwd: 'ui/ower_components/sweetalert/dist/',
-            dest: '.tmp/ower_components/sweetalert/dist/',
+            cwd: 'ui/bower_components/sweetalert/dist/',
+            dest: '.tmp/bower_components/sweetalert/dist/',
             src: 'sweetalert.css'
           }
         ]
