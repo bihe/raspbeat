@@ -15,4 +15,6 @@ router.get('/beats', appCtrl.getBeats);
 router.get('/sumBeats', appCtrl.getSumBeats);
 router.get('/user', appCtrl.user);
 
+router.delete('/remove/:title/:ip', appCtrl.deleteBeat);
+
 module.exports = router;

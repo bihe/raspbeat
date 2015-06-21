@@ -71,8 +71,6 @@ app.use(flash());
 app.use(cookieParser(config.application.secret));
 app.use(passport.initialize());
 app.use(passport.session());
-//ui.use(csrf());
-
 
 if(env === 'development') {
   app.use('/ui/', secService.authRequired, express.static(path.join(__dirname, 'ui'), {maxAge: '5d'}));
@@ -124,6 +122,19 @@ process.on('SIGINT', function() {
   });
 });
 
+
+
+
+// --------------------------------------------------------------------------
+// Route handling
+// --------------------------------------------------------------------------
+
+app.use('/auth', authRoutes);
+app.use('/api/receiver', tokenSvc.verifyToken.bind(tokenSvc), apiRoutes);
+
+// active CSRF for other urls
+app.use(csrf());
+
 // --------------------------------------------------------------------------
 // CSRF handling with angular
 // --------------------------------------------------------------------------
@@ -144,17 +155,8 @@ app.use(function(req, res, next) {
   next();
 });
 
-var csrfProtection = csrf({ cookie: true })
-
-
-// --------------------------------------------------------------------------
-// Route handling
-// --------------------------------------------------------------------------
-
-app.use('/auth', authRoutes);
-app.use('/api/receiver', tokenSvc.verifyToken.bind(tokenSvc), apiRoutes);
-app.use('/api/ui', secService.authRequired, csrfProtection, uiRoutes);
-app.use('/', secService.authRequired, csrfProtection, routes);
+app.use('/api/ui', secService.authRequired, uiRoutes);
+app.use('/', secService.authRequired, routes);
 
 // --------------------------------------------------------------------------
 // Error handling

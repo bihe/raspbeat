@@ -11,7 +11,10 @@
                     </span>
                 </div>
 
-                <!--<img class="img-rounded" src="img/thumbnail-1.jpg">-->
+                <div class="delete-beat" ng-if="value.down == true">
+                    <i class="fa fa-trash-o fa-2x" ng-click="ctrl.removeBeat(value.id)"></i>
+                </div>
+
                 <div class="caption text-center">
                     <h3 ng-if="value.down == true"><span class="label label-danger"> {{ value.title }} </span> </h3>
                     <h3 ng-if="value.down == false">{{ value.title }}</h3>
@@ -28,4 +31,5 @@
 
 
     </div>
+
 </div>

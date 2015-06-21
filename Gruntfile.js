@@ -141,6 +141,18 @@ module.exports = function (grunt) {
             cwd: 'ui/bower_components/Bootflat/bootflat/css',
             dest: '.tmp/bower_components/Bootflat/bootflat/css',
             src: 'bootflat.css'
+          },
+          {
+            expand: true,
+            cwd: 'ui/bower_components/font-awesome/css',
+            dest: '.tmp/bower_components/font-awesome/css',
+            src: 'font-awesome.css'
+          },
+          {
+            expand: true,
+            cwd: 'ui/ower_components/sweetalert/dist/',
+            dest: '.tmp/ower_components/sweetalert/dist/',
+            src: 'sweetalert.css'
           }
         ]
       },
@@ -149,6 +161,12 @@ module.exports = function (grunt) {
           {
             expand: true,
             cwd: 'ui/bower_components/bootstrap/dist/fonts/',
+            dest: '<%= base.dist %>/fonts',
+            src: '{,*/}*.*'
+          },
+          {
+            expand: true,
+            cwd: 'ui/bower_components/font-awesome/fonts/',
             dest: '<%= base.dist %>/fonts',
             src: '{,*/}*.*'
           }

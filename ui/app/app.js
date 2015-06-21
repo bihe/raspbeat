@@ -4,6 +4,7 @@
   angular
     .module('raspApp', [
       'ui.router',
+      'hSweetAlert',                       // sweet alert: native alert replacement
       'app.dashboard',
       'app.user'
     ])

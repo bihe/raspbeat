@@ -110,7 +110,6 @@ exports.getBeats = function(req, res) {
       return;
     }
 
-
     if(req.query.df) {
       filterValue = req.query.df;
       filter = {};
@@ -249,5 +248,45 @@ exports.getSumBeats = function(req, res) {
     console.log(err.stack);
 
     return res.status(500).send('Cannot get beat sums! ' + err);
+  }
+};
+
+/**
+ * delete beat entries defined by title and ip
+ * @param req
+ * @param res
+ */
+exports.deleteBeat = function(req, res) {
+  var filter, logicalAnd = [];
+  var title = req.params.title;
+  var ip = req.params.ip;
+
+  try {
+    console.log('Will remove entry ' + title + ' / ' + ip);
+
+    filter = {};
+    filter.title = title;
+    logicalAnd.push(filter);
+
+    filter = {};
+    filter.ip = ip;
+    logicalAnd.push(filter);
+
+    filter = {};
+    filter.$and = logicalAnd;
+
+    RaspBeat.find(filter).remove(function(err) {
+      if(err) {
+        console.log('Got error: ' + err);
+        console.log(err.stack);
+        return res.status(500).send('Cannot delete entries! ' + err);
+      }
+      return res.status(200).send('Entry deleted');
+    } );
+
+  } catch(err) {
+    console.log('Got error: ' + err);
+    console.log(err.stack);
+    return res.status(500).send('Cannot delete entries! ' + err);
   }
 };

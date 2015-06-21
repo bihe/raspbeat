@@ -11,7 +11,8 @@
 
     var service = {
       getDashboardData: getOverview,
-      getStats: getStats
+      getStats: getStats,
+      removeEntry: removeEntry
     };
     return service;
 
@@ -31,6 +32,15 @@
      */
     function getStats() {
       return $http.get('/api/ui/sumBeats');
+    }
+
+    /**
+     * remove the given entry from the store
+     * @param id
+     * @returns {HttpPromise}
+     */
+    function removeEntry(id) {
+      return $http.delete('/api/ui/remove/' + id.title + '/' + id.ip);
     }
   }
 })();
