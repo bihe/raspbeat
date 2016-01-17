@@ -6,7 +6,10 @@
  */
 
 var UserService = require('./userService')
-  , logger = require('../util/logger');
+  , logger = require('../util/logger')
+  , appConfig = require('../config/application')
+  , jwt = require('jsonwebtoken')
+  ;
 
 /**
  * @constructor
@@ -26,37 +29,6 @@ SecurityService.prototype = (function() {
   return {
 
     /**
-     * find an user by the supplied profile data for oauth
-     * @param accessToken
-     * @param refreshToken
-     * @param profile
-     * @param callback
-     */
-    findOAuthUser: function(accessToken, refreshToken, profile, callback) {
-      var userService = new UserService()
-        , foundUser = null;
-
-      userService.findUserByEmail(profile.emails[0].value).then(function(user) {
-        if (!user) {
-          console.info('Could not find the user!');
-          return callback(null, false, { message: 'The supplied Google account is not allowed to use this service!' });
-        }
-
-        foundUser = user;
-        console.info('Got authenticated user: ' + foundUser.displayName);
-
-        return userService.setProfile(user._id, profile._json);
-
-      }).then(function() {
-
-        callback(null, foundUser);
-      }).catch(function(error) {
-        console.error('Could not find the user! ' + error);
-        callback(error, null);
-      }).done();
-    },
-
-    /**
      * Simple route middleware to ensure user is authenticated
      * @param req
      * @param res
@@ -64,10 +36,53 @@ SecurityService.prototype = (function() {
      * @returns {*}
      */
     authRequired: function(req, res, next) {
-      if (req.isAuthenticated()) {
+      /* we need a JWT token as a cookie to procede with the logic
+       * if the cookie is not available redirect to the external
+       * SSO service login.binggl.net with the current path as
+       * a parameter
+       */
+      if(req.session.authenticated === true) {
         return next();
       }
-      res.redirect('/auth/login')
+      var cookies = req.cookies;
+      if(cookies[appConfig.sso.cookie]) {
+        var token = cookies[appConfig.sso.cookie];
+        // this is a JWT token - verify the token
+        jwt.verify(token, appConfig.sso.secret, function(err, decoded) {
+          if(err) {
+            console.log('Could not verify token: ' + err);
+            return res.redirect(appConfig.sso.errorUrl);
+          }
+          
+          console.log('Could decode the token!');
+          console.log('Find the user by the ')
+          
+          req.user = {};
+          req.user.username = decoded.UserName;
+          req.user.displayName = decoded.DisplayName;
+          req.user.email = decoded.Email;
+          req.user.id = decoded.UserId;
+          req.user.claims = decoded.Claims;
+          
+          req.session.authenticated = true;
+          req.session.user = req.user;
+          
+          return next();  
+        });
+        
+      } else {
+        req.session.authenticated = false;
+        // no cookie availalbe - redirect to the authentication system
+        var redirectUrl = appConfig.sso.url 
+          + appConfig.sso.siteparam 
+          + appConfig.sso.site 
+          + '&' 
+          + appConfig.sso.urlparam 
+          + appConfig.sso.returnUrl;
+          
+        console.log('Will send auth request to ' + redirectUrl); 
+        res.redirect(redirectUrl);
+      }
     },
 
     /**

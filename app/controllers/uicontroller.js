@@ -22,54 +22,15 @@ exports.index = function(req, res) {
 };
 
 /**
- * show the login form
- * @param req
- * @param res
- */
-exports.login = function(req, res) {
-  res.locals.errors = req.flash();
-  console.log(res.locals.errors);
-  res.render('login', { messages: res.locals.errors });
-};
-
-/**
- * perform a logout
- * @param req
- * @param res
- */
-exports.logout = function(req, res) {
-  var result = {};
-  result.success = true;
-  try {
-    req.logout();
-    res.render('login', { messages: { info: 'User logged out!' }});
-    return;
-  } catch(error) {
-    result.success = false;
-    result.error = error;
-  }
-  res.json(result);
-};
-
-/**
  * get user profile
  * @param req
  * @param res
  */
 exports.user = function(req, res) {
-  var userService = new UserService();
-  userService.findUserById(req.user).then(function(user) {
-    var viewModel = {};
-    viewModel.thumb = user.thumb;
-    viewModel.displayName = user.displayName;
-    viewModel.email = user.email;
-
-    res.json(viewModel);
-  }).catch(function(error) {
-
-    console.log(error.stack);
-    return res.status(400).send('Cannot find user! ' + error);
-  }).done();
+  if(req.session.user) {
+    return res.json(req.session.user);
+  }
+  return res.status(400).send('Cannot find user!');
 };
 
 /**

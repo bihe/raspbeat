@@ -15,14 +15,10 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var csrf = require('csurf');
 var flash = require('connect-flash');
-var passport = require('passport');
-var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
-var google = require('./app/config/google');
 var routes = require('./app/routes');
 var uiRoutes = require('./app/routes/ui');
 var apiRoutes = require('./app/routes/api');
-var authRoutes = require('./app/routes/auth');
 var config = require('./app/config/application');
 var database = require('./app/config/database');
 var TokenService = require('./app/services/tokenService');
@@ -37,17 +33,6 @@ var tokenSvc = new TokenService(config.application.tokens);
 // Passport setup
 // --------------------------------------------------------------------------
 var secService = new SecurityService();
-
-passport.serializeUser(secService.serializeUser);
-passport.deserializeUser(secService.deserializeUser);
-passport.use(new GoogleStrategy({
-    clientID: google.CLIENT_ID,
-    clientSecret: google.CLIENT_SECRET,
-    callbackURL: google.RETURN_URL
-  },
-  secService.findOAuthUser
-));
-
 
 // --------------------------------------------------------------------------
 // Application setup
@@ -69,8 +54,6 @@ app.use(bodyParser.urlencoded({
 app.use(session({name: 'raspbeat', secret: config.application.secret}));
 app.use(flash());
 app.use(cookieParser(config.application.secret));
-app.use(passport.initialize());
-app.use(passport.session());
 
 if(env === 'development') {
   app.use('/ui/', secService.authRequired, express.static(path.join(__dirname, 'ui'), {maxAge: '5d'}));
@@ -128,8 +111,6 @@ process.on('SIGINT', function() {
 // --------------------------------------------------------------------------
 // Route handling
 // --------------------------------------------------------------------------
-
-app.use('/auth', authRoutes);
 app.use('/api/receiver', tokenSvc.verifyToken.bind(tokenSvc), apiRoutes);
 
 // active CSRF for other urls
