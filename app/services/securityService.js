@@ -9,7 +9,7 @@ var UserService = require('./userService')
   , logger = require('../util/logger')
   , appConfig = require('../config/application')
   , jwt = require('jsonwebtoken')
-  ;
+  , _ = require('lodash');
 
 /**
  * @constructor
@@ -41,12 +41,17 @@ SecurityService.prototype = (function() {
        * SSO service login.binggl.net with the current path as
        * a parameter
        */
-      if(req.session.authenticated === true) {
+      var cookies = req.cookies;
+       
+      if(req.session.authenticated === true && cookies[appConfig.sso.cookie] 
+      && !_.isEmpty(cookies[appConfig.sso.cookie])) {
+        // is authenicated and a cookie value is available
+        // but skip the verification
         return next();
       }
-      var cookies = req.cookies;
-      if(cookies[appConfig.sso.cookie]) {
-        var token = cookies[appConfig.sso.cookie];
+      
+      if(cookies[appConfig.sso.cookie] && !_.isEmpty(cookies[appConfig.sso.cookie])) {
+        var token = cookies[appConfig.sso.cookie];  
         // this is a JWT token - verify the token
         jwt.verify(token, appConfig.sso.secret, function(err, decoded) {
           if(err) {
@@ -69,7 +74,6 @@ SecurityService.prototype = (function() {
           
           return next();  
         });
-        
       } else {
         req.session.authenticated = false;
         // no cookie availalbe - redirect to the authentication system
@@ -80,47 +84,14 @@ SecurityService.prototype = (function() {
           + appConfig.sso.urlparam 
           + appConfig.sso.returnUrl;
           
-        console.log('Will send auth request to ' + redirectUrl); 
-        res.redirect(redirectUrl);
+        console.log('Will send auth request to ' + redirectUrl);
+        
+        res.render('login', { loginUrl: redirectUrl } );
+         
+        //res.redirect(redirectUrl);
       }
-    },
-
-    /**
-     * To support persistent login sessions, Passport needs to be able to
-     * serialize users into and deserialize users out of the session.
-     * @param user
-     * @param callback
-     */
-    serializeUser: function(user, callback) {
-      // simple logic, just use the id of the user!
-      callback(null, user._id);
-    },
-
-    /**
-     * deserialize the user from the session
-     * @param obj
-     * @param callback
-     */
-    deserializeUser: function(obj, callback) {
-      // just return the id
-      callback(null, obj);
-
-      /* rather resource hungry, only load the user when needed!
-
-      // in the session the user-id was serialized
-      // use the id to load the user again
-      var userService = new UserService();
-      userService.findUserById(obj).then(function(user) {
-        callback(null, user);
-      }).catch(function(error) {
-        console.error('Could not find the user! ' + error);
-        callback(error, null);
-      }).done();
-
-      */
     }
   };
-
 })();
 
 module.exports = SecurityService;
