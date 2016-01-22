@@ -58,21 +58,39 @@ SecurityService.prototype = (function() {
             console.log('Could not verify token: ' + err);
             return res.redirect(appConfig.sso.errorUrl);
           }
-          
-          console.log('Could decode the token!');
-          console.log('Find the user by the ')
-          
-          req.user = {};
-          req.user.username = decoded.UserName;
-          req.user.displayName = decoded.DisplayName;
-          req.user.email = decoded.Email;
-          req.user.id = decoded.UserId;
-          req.user.claims = decoded.Claims;
-          
-          req.session.authenticated = true;
-          req.session.user = req.user;
-          
-          return next();  
+          if(decoded.Claims && decoded.Claims.length > 0) {
+            var claim = null;
+            var index = _.findIndex(decoded.Claims, function(entry) {
+              // entry syntax: name|url|role
+              var entries = entry.split('|');
+              if(entries && entries.length == 3) {
+                if(entries[0] === appConfig.sso.site) {
+                  claim = {};
+                  claim.role = entries[2];
+                  claim.name = entries[0];
+                  claim.url = entries[1];
+                  return true;
+                }
+              }
+              return false;
+            });
+            
+            if(claim && index > -1) {
+              req.user = {};
+              req.user.username = decoded.UserName;
+              req.user.displayName = decoded.DisplayName;
+              req.user.email = decoded.Email;
+              req.user.id = decoded.UserId;
+              req.user.claim = claim;
+              
+              req.session.authenticated = true;
+              req.session.user = req.user;
+              
+              return next();  
+            }
+          } 
+          console.log('No Claims available!');
+          return res.redirect(appConfig.sso.errorUrl);       
         });
       } else {
         req.session.authenticated = false;
