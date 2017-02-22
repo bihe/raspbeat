@@ -12,7 +12,6 @@ var appCtrl = require('../controllers/uicontroller');
 // --------------------------------------------------------------------------
 
 router.get('/overviewBeats', appCtrl.getBeatsOverview);
-router.get('/beats', appCtrl.getBeats);
 router.get('/sumBeats', appCtrl.getSumBeats);
 router.get('/user', appCtrl.user);
 
