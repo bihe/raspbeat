@@ -12,7 +12,6 @@ var logger = require('morgan');
 var session = require('cookie-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
 var csrf = require('csurf');
 var flash = require('connect-flash');
 
@@ -20,7 +19,6 @@ var routes = require('./app/routes');
 var uiRoutes = require('./app/routes/ui');
 var apiRoutes = require('./app/routes/api');
 var config = require('./app/config/application');
-var database = require('./app/config/database');
 var TokenService = require('./app/services/tokenService');
 var SecurityService = require('./app/services/securityService');
 
@@ -56,7 +54,7 @@ app.use(flash());
 app.use(cookieParser(config.application.secret));
 
 if(env === 'development') {
-  app.use('/ui/', secService.authRequired, express.static(path.join(__dirname, 'ui'), {maxAge: '5d'}));
+  app.use('/ui/', /*secService.authRequired,*/ express.static(path.join(__dirname, 'ui'), {maxAge: '5d'}));
   app.use(favicon(__dirname + '/ui/html5.ico'));
 } else if(env === 'production') {
   app.use('/ui/', secService.authRequired, express.static(path.join(__dirname, 'ui/dist'), {maxAge: '5d'}));
@@ -67,46 +65,6 @@ app.enable('trust proxy');
 
 // view settings
 app.locals.basePath = config.application.basePath;
-
-// --------------------------------------------------------------------------
-// Mongoose connection handling
-// --------------------------------------------------------------------------
-
-var uristring = process.env.MONGODB || database.uri;
-mongoose.connect(uristring, database.options);
-
-// CONNECTION EVENTS
-// When successfully connected
-mongoose.connection.on('connected', function () {
-  console.log('Mongoose default connection open to ' + uristring);
-});
-
-// If the connection throws an error
-mongoose.connection.on('error',function (err) {
-  console.log('Mongoose default connection error: ' + err);
-});
-
-// When the connection is disconnected
-mongoose.connection.on('disconnected', function () {
-  console.log('Mongoose default connection disconnected!');
-
-  // try each 15seconds to reestablish a connection
-  setTimeout(function() {
-    console.log('Re-Open a Mongoose connection!');
-    mongoose.connect(uristring, database.options);
-  }, 15000);
-});
-
-// If the Node process ends, close the Mongoose connection
-process.on('SIGINT', function() {
-  mongoose.connection.close(function () {
-    console.log('Mongoose default connection disconnected through ui termination');
-    process.exit(0);
-  });
-});
-
-
-
 
 // --------------------------------------------------------------------------
 // Route handling

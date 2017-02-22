@@ -7,7 +7,7 @@ var config = {};
 config.application = {};
 config.application.basePath = '/';
 config.application.secret = '--SECRET--';
-
+config.application.store = './store';
 config.application.timespandown = 13;
 
 config.application.tokens = ['--TOKEN--1', '--TOKEN--2'];

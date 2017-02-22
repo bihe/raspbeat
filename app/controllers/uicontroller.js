@@ -5,11 +5,10 @@
 
 var moment = require('moment');
 var _ = require('lodash');
-var RaspBeat = require('../models/raspbeat');
 var utils = require('../util/utils');
 var logger = require('../util/logger');
-var UserService = require('../services/userService');
 var config = require('../config/application');
+var BeatService = require('../services/beatService');
 
 /**
  * simple controller, just redirect to the html UI frontend
@@ -121,41 +120,23 @@ exports.getBeats = function(req, res) {
  * @param res
  */
 exports.getBeatsOverview = function(req, res) {
-
+  var service = new BeatService();
   console.log('get beats categorised');
-
   try {
+    service.getBeatsOverview().then(function(groupedBeats) {
+      // iterate over the grouped beats and find out if the beat
+      // is older than a given timespan
+      _.forEach(groupedBeats, function(elem) {
+        elem.timeIsOver = moment(elem.lastEntry).add(config.application.timespandown, 'h').isBefore();
+      });
 
-    // define the grouping
-    var filter = {
-      $group : {
-        _id : { title: '$title', ip: '$ip'},
-        count: { $sum: 1 },
-        lastEntry: {$last: '$created'}
-      }
-    };
-    var order = {
-      $sort : {
-        _id : 1
-      }
-    };
+      return res.json(groupedBeats);
 
-    RaspBeat.aggregate(filter, order,
-      function (err, groupedBeats) {
-        if (err) {
-          return res.status(500).send('Cannot return beats! ' + err);
-        }
-
-        // iterate over the grouped beats and find out if the beat
-        // is older than a given timespan
-        _.forEach(groupedBeats, function(elem) {
-          elem.timeIsOver = moment(elem.lastEntry).add(config.application.timespandown, 'h').isBefore();
-        });
-
-        return res.json(groupedBeats);
-      }
-    );
-
+     }).catch(function(error) {
+      console.log(error.stack);
+      return res.status(500).send('Cannot return beats! ' + error);
+    })
+    .done();
   } catch (err) {
     console.log('Got error: ' + err);
     console.log(err.stack);
@@ -172,37 +153,21 @@ exports.getBeatsOverview = function(req, res) {
 exports.getSumBeats = function(req, res) {
   try {
 
-    // define the grouping
-    var filter = {
-      $group : {
-        _id : { title: '$title', ip: '$ip'},
-        count: { $sum: 1 },
-        lastEntry: {$last: '$created'}
-      }
-    };
+    var service = new BeatService();
     var result = {};
-    var senders = 0;
-    var entries = 0;
+    
+    service.getBeatsStatistics().then(function(statistics) {
 
-    RaspBeat.aggregate(filter,
-      function (err, groupedBeats) {
-        if (err) {
-          return res.status(500).send('Cannot return beats! ' + err);
-        }
+      result.senders = statistics.hosts;
+      result.entries = statistics.beats;
 
-        // got the beats - num sum the number of entries and the number
-        // of senders
-        _.forEach(groupedBeats, function(elem) {
-          senders += 1;
-          entries += elem.count;
-        });
+      return res.json(result);
 
-        result.senders = senders;
-        result.entries = entries;
-
-        return res.json(result);
-      }
-    );
+    }).catch(function(error) {
+      console.log(error.stack);
+      return res.status(500).send('Cannot get beat statistics! ' + error);
+    })
+    .done();
 
   } catch (err) {
     console.log('Got error: ' + err);
@@ -218,32 +183,15 @@ exports.getSumBeats = function(req, res) {
  * @param res
  */
 exports.deleteBeat = function(req, res) {
-  var filter, logicalAnd = [];
   var title = req.params.title;
   var ip = req.params.ip;
+  var service = new BeatService();
 
   try {
     console.log('Will remove entry ' + title + ' / ' + ip);
 
-    filter = {};
-    filter.title = title;
-    logicalAnd.push(filter);
-
-    filter = {};
-    filter.ip = ip;
-    logicalAnd.push(filter);
-
-    filter = {};
-    filter.$and = logicalAnd;
-
-    RaspBeat.find(filter).remove(function(err) {
-      if(err) {
-        console.log('Got error: ' + err);
-        console.log(err.stack);
-        return res.status(500).send('Cannot delete entries! ' + err);
-      }
-      return res.status(200).send('Entry deleted');
-    } );
+    service.deleteBeatSync(title);
+    return res.status(200).send('Entry deleted');
 
   } catch(err) {
     console.log('Got error: ' + err);
