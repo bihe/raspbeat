@@ -5,8 +5,7 @@
  *
  */
 
-var UserService = require('./userService')
-  , logger = require('../util/logger')
+var logger = require('../util/logger')
   , appConfig = require('../config/application')
   , jwt = require('jsonwebtoken')
   , _ = require('lodash');
