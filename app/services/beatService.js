@@ -228,23 +228,27 @@ BeatService.prototype = (function() {
                   if(!directory.endsWith(path.sep)) {
                     directory += path.sep;
                   }
-                  fs.readFile(directory + newest.file, 'utf8', function (err, data) {
-                    if (err) {
-                      eachCallback(err);
-                    }
-                    var object = JSON.parse(data);
-                    groupedBeats.push({
-                      _id: {
-                        title: object.title,
-                        id: object.id
-                      },
-                      title: object.title, 
-                      ip: object.ip, 
-                      count: files.length, 
-                      lastEntry: new Date(newest.time).toISOString() });
-
+                  if(newest) {
+                    fs.readFile(directory + newest.file, 'utf8', function (err, data) {
+                      if (err) {
+                        eachCallback(err);
+                      }
+                      var object = JSON.parse(data);
+                      groupedBeats.push({
+                        _id: {
+                          title: object.title,
+                          id: object.id
+                        },
+                        title: object.title, 
+                        ip: object.ip, 
+                        count: files.length, 
+                        lastEntry: new Date(newest.time).toISOString() 
+                      });
+                      eachCallback();
+                    });
+                  } else {
                     eachCallback();
-                  });
+                  }
                 });
               });
             }, function(error) {
