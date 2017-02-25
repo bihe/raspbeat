@@ -103,7 +103,7 @@ BeatService.prototype = (function() {
       var payload;
 
       // we will create a directory for each beat.title
-      fs.mkdir(path, 777, function(err) {
+      fs.mkdir(path, function(err) {
         if (err) {
           if (err.code != 'EEXIST') {
             return deferred.reject(err);  
