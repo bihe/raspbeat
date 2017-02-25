@@ -237,7 +237,8 @@ BeatService.prototype = (function() {
                       groupedBeats.push({
                         _id: {
                           title: object.title,
-                          id: object.id
+                          id: object.id,
+                          ip: object.ip
                         },
                         title: object.title, 
                         ip: object.ip, 
